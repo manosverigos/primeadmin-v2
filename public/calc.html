@@ -1,0 +1,226 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Υπολογιστής τιμής</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mobile-nav">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="./index.html">Prime Admin Page</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" href="./offers/index.html">Προσφορές</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./calc.html">Υπολογιστής τιμής
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link " href="./message.html">Μηνύματα
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <ul class="nav nav-pills nav-fill shadow p-3 mb-5 bg-body rounded desktop-nav">
+    <li class="nav-item">
+      <a class="nav-link home" href="../index.html" tabindex="-1" aria-disabled="true">Prime Admin Page</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="../offers/index.html">Προσφορές</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="../calc.html">Υπολογιστής τιμής</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="./message.html">Μηνύματα
+      </a>
+    </li>
+  </ul>
+  <div class='title'>
+    <h5 class="card-title">Υπολογιστής τιμής</h5>
+  </div>
+  <div class="container container-cacl">
+    <div class="row row-cacl">
+      <div class="col col-cacl">
+        Χονδρική Τιμή
+      </div>
+      <div class="col col-cacl">
+        <input type="text" id="wp" value="">
+      </div>
+    </div>
+    <div class="row row-cacl">
+      <div class="col col-cacl">
+        Έκπτωση 1 (%)
+      </div>
+      <div class="col col-cacl">
+        <input type="text" id="disc1" value="">
+      </div>
+    </div>
+    <div class="row row-cacl">
+      <div class="col col-cacl">
+        Έκπτωση 2 (%)
+      </div>
+      <div class="col col-cacl">
+        <input type="text" id="disc2" value="">
+      </div>
+    </div>
+    <div class="row row-cacl">
+      <div class="col col-cacl">
+        Έκπτωση 3 (%)
+      </div>
+      <div class="col col-cacl">
+        <input type="text" id="disc3" value="">
+      </div>
+    </div>
+    <div class="row row-cacl">
+      <div class="col col-cacl">
+        MarkUp Eshop (%)
+      </div>
+      <div class="col col-cacl">
+        <input type="text" id="markUp" value="">
+      </div>
+    </div>
+    <div class="row row-cacl">
+      <div class="col col-cacl">
+        ΦΠΑ (%)
+      </div>
+      <div class="col col-cacl">
+        <input type="text" id="vat" value="">
+      </div>
+    </div>
+    <div class="row row-cacl">
+      <div class="col col-cacl">
+        Λιανική Τιμή
+      </div>
+      <div class="col col-cacl">
+        <input type="text" id="rp" value="">
+      </div>
+    </div>
+  </div>
+  <div class="buttons">
+    <button id="calc" class="btn btn-success btn-cacl" onclick="calculate()">Υπολογισμός</button>
+
+    <button id="erase" class="btn btn-danger btn-cacl" onclick="erase()">Καθαρισμός</button>
+
+  </div>
+  <div class="container result">
+    <p id="web"></p>
+  </div>
+
+
+  <script>
+    function calculate() {
+      var wp = parseFloat(document.getElementById("wp").value.replace(',', '.'));
+      var disc1 = parseFloat(document.getElementById("disc1").value.replace(',', '.'));
+      var disc2 = parseFloat(document.getElementById("disc2").value.replace(',', '.'));
+      var disc3 = parseFloat(document.getElementById("disc3").value.replace(',', '.'));
+      var markUp = parseFloat(document.getElementById("markUp").value.replace(',', '.'));
+      var vat = parseFloat(document.getElementById("vat").value.replace(',', '.'));
+      var rp = parseFloat(document.getElementById("rp").value.replace(',', '.'));
+
+      if (isNaN(disc1)) {
+        disc1 = 0;
+      }
+
+      if (isNaN(disc2)) {
+        disc2 = 0;
+      }
+
+      if (isNaN(disc3)) {
+        disc3 = 0;
+      }
+      var webPrice = wp * (1 - disc1 / 100) * (1 - disc2 / 100) * (1 - disc3 / 100) * (markUp / 100 + 1) * (1 + vat /
+        100)
+      var webDisc;
+      if (isNaN(rp)) {
+        webDisc = "Παρακαλώ εισάγετε Λιανική Τιμή για τον υπολογισμό Έκπτωσης"
+      } else {
+        webDisc = ((1 - webPrice / rp) * 100).toFixed(2)
+      }
+
+      var result = "Έκπτωση Web = " + webDisc + " %" + "<br>" + "Τιμή Web = " + webPrice.toFixed(2)
+
+      document.getElementById("web").innerHTML = result
+      console.log(result)
+    }
+
+    function erase() {
+      document.getElementById("wp").value = "";
+      document.getElementById("disc1").value = "";
+      document.getElementById("disc2").value = "";
+      document.getElementById("disc3").value = "";
+      document.getElementById("markUp").value = "";
+      document.getElementById("vat").value = "";
+      document.getElementById("rp").value = "";
+      document.getElementById("web").innerHTML = "";
+    }
+
+    rp.addEventListener("keyup", function (event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        document.getElementById("calc").click();
+      }
+    });
+
+    wp.addEventListener("keyup", function (event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        document.getElementById("disc1").focus();
+      }
+    });
+
+    disc1.addEventListener("keyup", function (event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        document.getElementById("disc2").focus();
+      }
+    });
+
+    disc2.addEventListener("keyup", function (event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        document.getElementById("disc3").focus();
+      }
+    });
+
+    disc3.addEventListener("keyup", function (event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        document.getElementById("markUp").focus();
+      }
+    });
+
+    markUp.addEventListener("keyup", function (event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        document.getElementById("vat").focus();
+      }
+    });
+
+    vat.addEventListener("keyup", function (event) {
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        document.getElementById("rp").focus();
+      }
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
+  </script>
+</body>
+
+</html>
