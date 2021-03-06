@@ -3,6 +3,9 @@
 
 }
 
+.btn-edit{
+  margin-top: 10px;
+}
 .saleTable {
   overflow-x: scroll;
   padding: 0;
