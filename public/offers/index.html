@@ -12,9 +12,9 @@
   <script>
     setCompleted = async (el, type) => {
       let prodID = el.id
-      console.log(prodID)
-      let offerID = el.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.id
 
+      let offerID = el.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.id
+      console.log(offerID)
       let response;
       if (type == 'sale'){
         response = await fetch(`/api/offers/setcompleted/?id=${offerID}&prodid=${prodID}&type=${type}`)
@@ -314,7 +314,7 @@ return text
             const tableEl6 = document.createElement('td')
             const btn_complete = document.createElement('button')
             btn_complete.className = 'btn btn-success'
-            btn_complete.id = prod.productID
+            btn_complete.id = prod.desc
             btn_complete.textContent = 'Ολοκλήρωση'
             btn_complete.setAttribute("onclick", "setCompleted(this, 'time')")
             tableEl6.appendChild(btn_complete)
@@ -360,8 +360,6 @@ return text
       offer_body.append(right_col)
       saleTableDiv.appendChild(saleTable)
       offer_body.append(saleTableDiv)
-
-      
 
       if (notCompletedProds.length > 0) {
         const div8 = document.createElement('div')
