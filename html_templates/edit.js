@@ -293,21 +293,6 @@ exports.editOffer = (offer) => {
           const yyyy = today.getFullYear();
           today = yyyy + '-' + mm + '-' + dd;
           
-          const labelStart = document.createElement('label')
-          labelStart.setAttribute("for", 'startDate')
-          labelStart.className = 'form-label'
-          const textStart = document.createTextNode('Ημερομηνία έναρξης')
-          labelStart.appendChild(textStart)
-          type_container.appendChild(labelStart)
-  
-          const inputStart = document.createElement('input')
-          inputStart.id = 'startDate'
-          inputStart.setAttribute("name", "startDate")
-          inputStart.setAttribute("type", "date")
-          inputStart.setAttribute("value",'${offer.startDate}')
-          inputStart.className = 'form-control'
-          inputStart.required = true;
-          type_container.appendChild(inputStart)
 
           const labelEnd = document.createElement('label')
           labelEnd.setAttribute("for", 'endDate')
@@ -502,10 +487,11 @@ exports.editOffer = (offer) => {
           </option>
         </select>
   
+        <label for='startDate' class="form-label">Ημερομηνία έναρξης</label>
+        <input id='startDate' name='startDate' type="date" placeholder="Ημερομηνία έναρξης" class="form-control" value = '${offer.startDate}' required>
 
-  
         <div id="type"></div>
-  
+
         <label for="comment" class="form-label">Ολοκλήρωση</label>
         <textarea id='comment' rows='4' cols='50' name='comment' type="text" class="form-control" required>${offer.comment}</textarea>
         <input type="submit" class="btn btn-primary" value='Επιβεβαίωση' onclick="validateForm()">

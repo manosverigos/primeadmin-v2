@@ -8,7 +8,6 @@ const uri =
 
 exports.applyEdit = async (req, res) => {
   const data = req.body;
-  console.log(data)
   const id = data._id
   const o_id = new mongodb.ObjectID(id);
 
@@ -22,10 +21,12 @@ exports.applyEdit = async (req, res) => {
     comment: data.comment
   }
 
+  if(data.startDate) {
+    info.startDate = data.startDate
+  }
   if (data.endDate) {
     info.endDate = data.endDate
   } 
-
 
   try {
     await client.connect();
@@ -39,22 +40,26 @@ exports.applyEdit = async (req, res) => {
     const offer = await collection.findOne(filter)
     const prods = offer.products
     
+
     let newProds = []
-    for(prod of prods) {
-      if(data.products.filter( obj => obj.productID == prod.productID)[0]){
-        let newProdData = data.products.filter( obj => obj.productID == prod.productID)[0]
-        prod.desc = newProdData.desc
-        prod.sales_num = newProdData.sales_num
-        newProds.push(prod)
+    if(offer.type == 'sales'){
+      for(prod of data.products) {
+        let oldProd = prods.filter(obj => obj.productID == prod.productID)[0]
+        oldProd.desc = prod.desc
+        oldProd.sales_num = prod.sales_num
+        newProds.push(oldProd)
       }
+    } else if (offer.type == 'time') {
+        let oldProd = prods[0]
+        oldProd.desc = data.products
+        newProds.push(oldProd)
     }
-    console.log(prods.length)
-    console.log(newProds.length)
+  
+    info.products = newProds
     const updateDoc = {
-      $set: {
-        products: newProds
-      }
+      $set: info
     }
+
     const result = await collection.updateOne(filter, updateDoc);
   } catch {
     console.log('oops')
