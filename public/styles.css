@@ -10,6 +10,9 @@
   overflow-x: scroll;
   padding: 0;
 }
+#calculationContainer {
+  margin: 15px;
+}
 .addLine{
   margin-top: 10px;
 }
