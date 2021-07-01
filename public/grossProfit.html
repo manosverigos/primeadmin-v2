@@ -42,7 +42,9 @@
               <a class="nav-link" href="./message.html">Μηνύματα </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="./grossProfit.html">Υπολογισμός κέρδους </a>
+              <a class="nav-link" href="./grossProfit.html"
+                >Υπολογισμός κέρδους
+              </a>
             </li>
           </ul>
         </div>
@@ -77,30 +79,41 @@
       <h5 class="card-title">Υπολογισμός μεικτού κέρδους</h5>
     </div>
     <div id="calculationContainer">
-    <div id="excelFileDescription">
-      Τα excel πωλήσεων πρέπει να εκδοθούν με περίοδο ανάλυσης
-      <strong>1 ημέρα</strong>. Το excel αγορών πρέπει να εκδοθεί για το μέγιστο
-      δυνατό διάστημα και με περίοδο ανάλυσης <strong>7 ημέρες</strong>.
-      <div id="excelFileList">
-        <br />
-        <h2>Ονόματα αρχείων</h2>
-        <ul>
-          <li>Πωλήσεις Eshop: <strong>eshop.xlsx </strong>(Σειρές: 1051,1052,1054,1056,1062,1063,1064,1068,1069)</li>
-          <li>Πωλήσεις εξωτερικού: <strong>abroad.xlsx</strong> (Σειρές: 1151,1152,1153,1154)</li>
-          <li>Πωλήσεις φαρμακείου: <strong>pharm.xlsx</strong> (Σειρές: 1057,1058,1065)</li>
-          <li>Αγορές προϊόντων: <strong>agores.xlsx</strong></li>
-          <li>Προϊόντα: <strong>prods.xlsx</strong></li>
-          <li>Year End Bonus: <strong>yeb.xlsx</strong></li>
-        </ul>
+      <div id="excelFileDescription">
+        Τα excel πωλήσεων πρέπει να εκδοθούν με περίοδο ανάλυσης
+        <strong>1 ημέρα</strong>. Το excel αγορών πρέπει να εκδοθεί για το
+        μέγιστο δυνατό διάστημα και με περίοδο ανάλυσης
+        <strong>7 ημέρες</strong>.
+        <div id="excelFileList">
+          <br />
+          <h2>Ονόματα αρχείων</h2>
+          <ul>
+            <li>
+              Πωλήσεις Eshop: <strong>eshop.xlsx </strong>(Σειρές:
+              1051,1052,1054,1056,1062,1063,1064,1068,1069)
+            </li>
+            <li>
+              Πωλήσεις εξωτερικού: <strong>abroad.xlsx</strong> (Σειρές:
+              1151,1152,1153,1154)
+            </li>
+            <li>
+              Πωλήσεις φαρμακείου: <strong>pharm.xlsx</strong> (Σειρές:
+              1057,1058,1065)
+            </li>
+            <li>Αγορές προϊόντων: <strong>agores.xlsx</strong></li>
+            <li>Προϊόντα: <strong>prods.xlsx</strong></li>
+            <li>Year End Bonus: <strong>yeb.xlsx</strong></li>
+          </ul>
+        </div>
       </div>
+      <div id="inputDiv">
+        Παρακαλώ ανεβάστε τα παραπάνω αρχεία για να ξεκινήσει ο υπολογισμός
+        <br />
+        <br />
+        <input type="file" multiple id="input" />
+      </div>
+      <div id="results"></div>
     </div>
-    <div id="inputDiv">
-      Παρακαλώ ανεβάστε τα παραπάνω αρχεία για να ξεκινήσει ο υπολογισμός <br />
-      <br />
-      <input type="file" multiple id="input" />
-    </div>
-    <div id="results"></div>
-  </div>
   </body>
   <script>
     const input = document.getElementById("input");
@@ -270,7 +283,7 @@
       const grossProfit = fullSaleSum - fullPurchaseSum;
       document.getElementById(
         "results"
-      ).innerHTML = `<br>Μείκτο κέρδος: <strong>${grossProfit.toFixed(
+      ).innerHTML = `<br>Μεικτό κέρδος: <strong>${grossProfit.toFixed(
         2
       )} \u20AC</strong><br>
   Τζίρος χωρίς αντίστοιχες αγορές: <strong>${sellPriceWithoutPurchases.toFixed(
@@ -359,7 +372,9 @@
       return productInfo.concat(purchasesInfo);
     };
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
-  integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
-</script>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
+    crossorigin="anonymous"
+  ></script>
 </html>
