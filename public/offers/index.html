@@ -1,544 +1,623 @@
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Προσφορές</title>
+    <!-- CSS only -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+    <script>
+      setCompleted = async (el, type) => {
+        let prodID = el.id;
 
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Προσφορές</title>
-  <!-- CSS only -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-  <link rel="stylesheet" href="../styles.css">
-  <script>
-    setCompleted = async (el, type) => {
-      let prodID = el.id
+        let offerID =
+          el.parentElement.parentElement.parentElement.parentElement
+            .parentElement.parentElement.parentElement.id;
+        console.log(offerID);
+        let response;
+        if (type == "sale") {
+          response = await fetch(
+            `/api/offers/setcompleted/?id=${offerID}&prodid=${prodID}&type=${type}`
+          );
+        } else if (type == "time") {
+          response = await fetch(
+            `/api/offers/setcompleted/?id=${offerID}&type=${type}`
+          );
+        }
+        location.reload(true);
+      };
+    </script>
+    <script>
+      generatePagination = (page, pageCount) => {
+        if (pageCount == "0") {
+          return "";
+        }
+        console.log(page);
+        let text = `<nav aria-label="Page navigation example">
+  <ul class="pagination">`;
+        if (page == "1") {
+          text += `<li class="page-item disabled">`;
+        } else {
+          text += `<li class="page-item">`;
+        }
 
-      let offerID = el.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.id
-      console.log(offerID)
-      let response;
-      if (type == 'sale'){
-        response = await fetch(`/api/offers/setcompleted/?id=${offerID}&prodid=${prodID}&type=${type}`)
-      } else if (type =='time'){
-        response = await fetch(`/api/offers/setcompleted/?id=${offerID}&type=${type}`)
-      }
-     location.reload(true)
-    }
-  </script>
-  <script>
-    generatePagination = (page, pageCount) => {
-      if(pageCount == '0'){
-        return ''
-      }
-      console.log(page)
-      let text = `<nav aria-label="Page navigation example">
-  <ul class="pagination">`
-    if(page == '1'){
-      text += `<li class="page-item disabled">`
-    } else{
-      text += `<li class="page-item">`
-    }
-
-    text += `<a class="page-link" onclick="reloadPage(${parseInt(page)-1})" href="#" aria-label="Previous">
+        text += `<a class="page-link" onclick="reloadPage(${
+          parseInt(page) - 1
+        })" href="#" aria-label="Previous">
         <span aria-hidden="true">&laquo;</span>
       </a>
-    </li>`
+    </li>`;
 
-    for (i=0; i<pageCount; i++){
-      if(i == (parseInt(page)-1)){
-        text += `<li class="page-item active"><a class="page-link" onclick="reloadPage(${i+1})" href="#">${i+1}</a></li>`
-      }else{
-        text += `<li class="page-item"><a class="page-link" onclick="reloadPage(${i+1})" href="#">${i+1}</a></li>`
-      }
-    }
-    if(page == pageCount){
-      text += `<li class="page-item disabled">`
-    } else{
-      text += `<li class="page-item">`
-    }
-    text += `<a class="page-link" onclick="reloadPage(${parseInt(page)+1})" href="#" aria-label="Next">
+        for (i = 0; i < pageCount; i++) {
+          if (i == parseInt(page) - 1) {
+            text += `<li class="page-item active"><a class="page-link" onclick="reloadPage(${
+              i + 1
+            })" href="#">${i + 1}</a></li>`;
+          } else {
+            text += `<li class="page-item"><a class="page-link" onclick="reloadPage(${
+              i + 1
+            })" href="#">${i + 1}</a></li>`;
+          }
+        }
+        if (page == pageCount) {
+          text += `<li class="page-item disabled">`;
+        } else {
+          text += `<li class="page-item">`;
+        }
+        text += `<a class="page-link" onclick="reloadPage(${
+          parseInt(page) + 1
+        })" href="#" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>
       </a>
     </li>
   </ul>
-</nav>`
-return text
-}
-  </script>
+</nav>`;
+        return text;
+      };
+    </script>
 
-  <script>
-    reloadPage = (page) => {
-      document.getElementById('offers').innerHTML = ''
-      document.getElementById('pagination').innerHTML = ''
-      document.getElementById('timeline').innerHTML = ''
-      if(page){
-        _page = parseInt(page)
-        getOffers(_page)
-      }else{
-        getOffers()
-      }
-    }
-  </script>
-  <script>
-    generateOfferCard = (offer, filter) => {
-      let notCompletedProds = offer.products.filter(obj => obj.status != 'complete')
-
-      const offer_card = document.createElement('div')
-      offer_card.id = offer._id
-      offer_card.className = 'offer_card card'
-
-      const h1 = document.createElement('p')
-      h1.className = 'card-header'
-      h1.textContent = offer.title
-      offer_card.append(h1)
-
-      const offer_body = document.createElement('div')
-      offer_body.className = 'card-body row'
-
-      const left_col = document.createElement('div')
-      left_col.className = 'col-6'
-      const right_col = document.createElement('div')
-      right_col.className = 'col-6'
-
-      const saleTableDiv = document.createElement('div')
-      saleTableDiv.className = 'saleTable container'
-
-      const saleTable = document.createElement('table')
-      saleTable.className = 'table table-striped'
-
-      if (offer.type == 'sales') {
-        const div1 = document.createElement('div')
-        div1.className = 'row card-info'
-
-        const div11 = document.createElement('div')
-        div11.className = 'offer-type f-grey col'
-        div11.textContent = 'Τύπος'
-
-        const div12 = document.createElement('div')
-        div12.className = 'offer-type col'
-        div12.textContent = 'Βάσει πωλήσεων'
-
-        div1.append(div11)
-        div1.append(div12)
-        right_col.append(div1)
-
-        const div8 = document.createElement('div')
-        div8.className = 'row card-info'
-
-        const div81 = document.createElement('div')
-        div81.className = 'offer-startDate f-grey col'
-        div81.textContent = 'Ημερομηνία έναρξης'
-
-        const div82 = document.createElement('div')
-        div82.className = 'offer-startDate col'
-        div82.textContent = offer.startDate
-
-        div8.append(div81)
-        div8.append(div82)
-        right_col.append(div8)
-
-        const div2 = document.createElement('div')
-        div2.className = 'row card-info'
-
-        
-
-        const tableH = document.createElement('thead')
-        const tableR1 = document.createElement('tr')
-
-        for (col of ['#', 'ID','Περιγραφή', 'Όριο', 'Τρέχ. πωλήσεις', 'Status',  'Ολοκλήρωση']){
-          if(col == 'Ολοκλήρωση'){
-            if(filter == 'completed' || (notCompletedProds.length == 0)){
-              continue
-            }
-          }
-          const tableHEl = document.createElement('th')
-          tableHEl.setAttribute("scope","col")
-          tableHEl.innerHTML = col
-          tableR1.appendChild(tableHEl)
-        }
-
-        tableH.appendChild(tableR1)
-        saleTable.appendChild(tableH)
-
-        const tableBody = document.createElement('tbody')
-        
-        let count = 1
-        for(prod of offer.products){
-          const tableR2 = document.createElement('tr')
-
-          const tableHEl2 = document.createElement('th')
-          tableHEl2.setAttribute("scope","row")
-          tableHEl2.innerHTML = count
-          count++
-          tableR2.appendChild(tableHEl2)
-
-          const tableEl1 = document.createElement('td')
-          tableEl1.innerHTML = prod.productID
-          tableR2.appendChild(tableEl1)
-
-          const tableEl2 = document.createElement('td')
-          tableEl2.innerHTML = prod.desc
-          tableR2.appendChild(tableEl2)
-
-          const tableEl3 = document.createElement('td')
-          tableEl3.innerHTML = prod.sales_num
-          tableR2.appendChild(tableEl3)
-
-          const tableEl4 = document.createElement('td')
-          if(prod.current_sales){
-            tableEl4.innerHTML = prod.current_sales
-          }
-          tableR2.appendChild(tableEl4)
-
-          const tableEl5 = document.createElement('td')
-          if(prod.status == 'not-overdue'){
-            tableEl5.innerHTML = 'Εμπρόθεσμη'
-            tableEl5.style.color = 'green'
-          } else if (prod.status == 'overdue'){
-            tableEl5.innerHTML = 'Εκπρόθεσμη'
-            tableEl5.style.color = 'red'
-          } else if (prod.status == 'complete'){
-            tableEl5.innerHTML = 'Ολοκληρωμένη'
-          }
-          
-          tableR2.appendChild(tableEl5)
-
-          if(prod.status != 'complete'){
-            const tableEl6 = document.createElement('td')
-            const btn_complete = document.createElement('button')
-            btn_complete.className = 'btn btn-success'
-            btn_complete.id = prod.productID
-            btn_complete.textContent = 'Ολοκλήρωση'
-            btn_complete.setAttribute("onclick", "setCompleted(this, 'sale')")
-            tableEl6.appendChild(btn_complete)
-            tableR2.appendChild(tableEl6)
-          }
-          tableBody.appendChild(tableR2)
-        }
-        saleTable.appendChild(tableBody)
-        
-      } else if (offer.type == 'time') {
-        const div1 = document.createElement('div')
-        div1.className = 'row card-info'
-
-        const div11 = document.createElement('div')
-        div11.className = 'offer-type f-grey col'
-        div11.textContent = 'Τύπος'
-
-        const div12 = document.createElement('div')
-        div12.className = 'offer-type col'
-        div12.textContent = 'Βάσει χρόνου'
-
-        div1.append(div11)
-        div1.append(div12)
-        right_col.append(div1)
-
-        const div8 = document.createElement('div')
-        div8.className = 'row card-info'
-
-        const div81 = document.createElement('div')
-        div81.className = 'offer-startDate f-grey col'
-        div81.textContent = 'Ημερομηνία έναρξης'
-
-        const div82 = document.createElement('div')
-        div82.className = 'offer-startDate col'
-        div82.textContent = offer.startDate
-
-        div8.append(div81)
-        div8.append(div82)
-        right_col.append(div8)
-
-        const div2 = document.createElement('div')
-        div2.className = 'row card-info'
-
-        const div21 = document.createElement('div')
-        div21.className = 'offer-endDate f-grey col'
-        div21.textContent = 'Ημερομηνία λήξης'
-
-        console.log(offer)
-        const div22 = document.createElement('div')
-        div22.className = 'offer-endDate col'
-        div22.textContent = offer.endDate
-
-        div2.append(div21)
-        div2.append(div22)
-        right_col.append(div2)
-
-        const tableH = document.createElement('thead')
-        const tableR1 = document.createElement('tr')
-
-        for (col of ['#', 'Περιγραφή', 'Status',  'Ολοκλήρωση']){
-          if(col == 'Ολοκλήρωση'){
-            if(filter == 'completed' || (notCompletedProds.length == 0)){
-              continue
-            }
-          }
-          const tableHEl = document.createElement('th')
-          tableHEl.setAttribute("scope","col")
-          tableHEl.innerHTML = col
-          tableR1.appendChild(tableHEl)
-        }
-
-        tableH.appendChild(tableR1)
-        saleTable.appendChild(tableH)
-
-        const tableBody = document.createElement('tbody')
-        
-        let count = 1
-        for(prod of offer.products){
-          const tableR2 = document.createElement('tr')
-
-          const tableHEl2 = document.createElement('th')
-          tableHEl2.setAttribute("scope","row")
-          tableHEl2.innerHTML = count
-          count++
-          tableR2.appendChild(tableHEl2)
-
-          const tableEl2 = document.createElement('td')
-          tableEl2.innerHTML = prod.desc
-          tableR2.appendChild(tableEl2)
-
-          const tableEl5 = document.createElement('td')
-          if(prod.status == 'not-overdue'){
-            tableEl5.innerHTML = 'Εμπρόθεσμη'
-            tableEl5.style.color = 'green'
-          } else if (prod.status == 'overdue'){
-            tableEl5.innerHTML = 'Εκπρόθεσμη'
-            tableEl5.style.color = 'red'
-          } else if (prod.status == 'complete'){
-            tableEl5.innerHTML = 'Ολοκληρωμένη'
-          }
-          
-          tableR2.appendChild(tableEl5)
-
-          if(prod.status != 'complete'){
-            const tableEl6 = document.createElement('td')
-            const btn_complete = document.createElement('button')
-            btn_complete.className = 'btn btn-success'
-            btn_complete.id = prod.desc
-            btn_complete.textContent = 'Ολοκλήρωση'
-            btn_complete.setAttribute("onclick", "setCompleted(this, 'time')")
-            tableEl6.appendChild(btn_complete)
-            tableR2.appendChild(tableEl6)
-          }
-          tableBody.appendChild(tableR2)
-        }
-        saleTable.appendChild(tableBody)
-        
-      }
-
-      const div7 = document.createElement('div')
-      div7.className = 'row card-info'
-
-      const div71 = document.createElement('div')
-      div71.className = 'offer-id col f-grey'
-      div71.textContent = 'ID'
-
-      const div72 = document.createElement('div')
-      div72.className = 'offer-id col'
-      div72.textContent = offer._id
-
-      div7.append(div71)
-      div7.append(div72)
-      left_col.append(div7)
-
-      const div4 = document.createElement('div')
-      div4.className = 'row card-info'
-
-      const div41 = document.createElement('div')
-      div41.className = 'offer-comment f-grey col'
-      div41.textContent = 'Σχόλιο'
-
-      const div42 = document.createElement('div')
-      div42.className = 'offer-comment col'
-      div42.textContent = offer.comment
-
-      div4.append(div41)
-      div4.append(div42)
-      left_col.append(div4)
-
-      offer_body.append(left_col)
-      offer_body.append(right_col)
-      saleTableDiv.appendChild(saleTable)
-      offer_body.append(saleTableDiv)
-
-      if (notCompletedProds.length > 0) {
-        const div8 = document.createElement('div')
-        div8.className = 'buttons-container'
-
-        const editLink = document.createElement('a')
-        editLink.setAttribute("href", `/offers/edit/?id=${offer._id}`)
-        editLink.className = 'a-edit btn btn-edit btn-warning btn-complete'
-        editLink.textContent='Επεξεργασία'
-        div8.append(editLink)
-        offer_body.append(div8)
-      }
-      offer_card.append(offer_body)
-      const container = document.getElementById('offers')
-      container.append(offer_card)
-    }
-  </script>
-  <script>
-    getOffers = async (page) => {
-      const filter = document.getElementById('filter-form').value;
-      const search_term = document.getElementById('search-bar').value
-      let fetch_url = `/api/offers?filter=${filter}`
-      if(page){
-        fetch_url += `&p=${page}`
-      }
-      if(search_term !== ''){
-        fetch_url += `&search=${search_term}`
-      }
-      const res = await fetch(fetch_url)
-      const data = await res.json();
-      console.log(data)
-      let offersResult = data.result
-
-      for (offer of offersResult) {
-        generateOfferCard(offer, filter)
-      }
-      document.getElementById('pagination').innerHTML= generatePagination(data.page, data.pageCount)
-    }
-
-  </script>
-  <script>
-    createTimeline = async () => {
-      const filter = document.getElementById('filter-form').value;
-      const search_term = document.getElementById('search-bar').value
-
-      let fetch_url = `/api/offers/timeline?filter=${filter}`
-
-      const res = await fetch(fetch_url)
-      const data = await res.json();
-      let offersResult = data.result
-      console.log(offersResult)
-      if(offersResult.filter(offer => offer.type == 'time').length > 0){
-        let container = document.getElementById('timeline');
-        let date_offers = []
-
-        for(offer of offersResult) {
-          date_offers.push({
-            content: offer.title,
-            start: offer.startDate,
-            end: offer.endDate
-          })
-        }
-        // Create a DataSet (allows two way data-binding)
-        let items = new vis.DataSet(date_offers);
-        // Configuration for the Timeline
-        let today = new Date();
-        const dd = String(today.getDate()).padStart(2, '0');
-        const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-        const yyyy = today.getFullYear();
-        today = yyyy + '-' + mm + '-' + dd;
-
-        let options = {
-          width: '85%',
-          timeAxis: { scale: 'day', step: 3 },
-          height: '250px',
-          start: today
-        };
-        
-        // Create a Timeline
-        let timeline = new vis.Timeline(container, items, options);
-        function getRandomColor() {
-          color = "hsl(" + Math.random() * 360 + ", 100%, 75%)";
-          return color;
-        }
-        for(el of document.getElementsByClassName("vis-item-overflow")){
-          el.style.backgroundColor = getRandomColor()
-        }
-      }
-    }
-  </script>
-<script type="text/javascript" src="//unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"></script>
-<link href="//unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css" rel="stylesheet" type="text/css" />
-</head>
-
-<body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light mobile-nav">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="../index.html">Prime Admin Page</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="./index.html">Προσφορές</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../calc.html">Υπολογιστής τιμής
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="../message.html">Μηνύματα
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-  <ul class="nav nav-pills nav-fill shadow p-3 mb-5 bg-body rounded desktop-nav">
-    <li class="nav-item">
-      <a class="nav-link home" href="../index.html" tabindex="-1" aria-disabled="true">Prime Admin Page</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link active" href="../offers/index.html">Προσφορές</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="../calc.html">Υπολογιστής τιμής</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="../message.html">Μηνύματα
-      </a>
-    </li>
-  </ul>
-  <div class='title'>
-    <h5 class="card-title">Προσφορές</h5>
-  </div>
-  <div id="filter-addbtn">
-    <div class="row">
-      <div class="filter col">
-        <select id='filter-form' class="form-select filter-form" aria-label="Default select example"
-          onchange="reloadPage()">
-          <option value="all">Όλα</option>
-          <option value='not-completed' selected>Ενεργά</option>
-          <option value="completed">Ολοκληρωμένα</option>
-        </select>
-      </div>
-      <div class="add-offer col">
-        <a href="./add.html" class='add-link'><button class="btn btn-primary btn-add-offer">Προσθήκη</button></a>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <input class="form-control" type="text" name="search-bar" placeholder="Αναζήτηση" id="search-bar">
-      </div>
-      <div class="col btn-search-cont">
-        <button id="btn-search" class="btn btn-primary btn-search" onclick="reloadPage()">Αναζήτηση</button>
-      </div>
-    </div>
-  </div>
-  <div id="timeline"></div>
-  <div id="offers">
-  </div>
-  <div id="pagination"></div>
-  <script>
-    getOffers()
-    createTimeline()
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
-  </script>
     <script>
-      let search_field = document.getElementById('search-bar')
+      reloadPage = (page) => {
+        document.getElementById("offers").innerHTML = "";
+        document.getElementById("pagination").innerHTML = "";
+        document.getElementById("timeline").innerHTML = "";
+        if (page) {
+          _page = parseInt(page);
+          getOffers(_page);
+        } else {
+          getOffers();
+        }
+      };
+    </script>
+    <script>
+      generateOfferCard = (offer, filter) => {
+        let notCompletedProds = offer.products.filter(
+          (obj) => obj.status != "complete"
+        );
+
+        const offer_card = document.createElement("div");
+        offer_card.id = offer._id;
+        offer_card.className = "offer_card card";
+
+        const h1 = document.createElement("p");
+        h1.className = "card-header";
+        h1.textContent = offer.title;
+        offer_card.append(h1);
+
+        const offer_body = document.createElement("div");
+        offer_body.className = "card-body row";
+
+        const left_col = document.createElement("div");
+        left_col.className = "col-6";
+        const right_col = document.createElement("div");
+        right_col.className = "col-6";
+
+        const saleTableDiv = document.createElement("div");
+        saleTableDiv.className = "saleTable container";
+
+        const saleTable = document.createElement("table");
+        saleTable.className = "table table-striped";
+
+        if (offer.type == "sales") {
+          const div1 = document.createElement("div");
+          div1.className = "row card-info";
+
+          const div11 = document.createElement("div");
+          div11.className = "offer-type f-grey col";
+          div11.textContent = "Τύπος";
+
+          const div12 = document.createElement("div");
+          div12.className = "offer-type col";
+          div12.textContent = "Βάσει πωλήσεων";
+
+          div1.append(div11);
+          div1.append(div12);
+          right_col.append(div1);
+
+          const div8 = document.createElement("div");
+          div8.className = "row card-info";
+
+          const div81 = document.createElement("div");
+          div81.className = "offer-startDate f-grey col";
+          div81.textContent = "Ημερομηνία έναρξης";
+
+          const div82 = document.createElement("div");
+          div82.className = "offer-startDate col";
+          div82.textContent = offer.startDate;
+
+          div8.append(div81);
+          div8.append(div82);
+          right_col.append(div8);
+
+          const div2 = document.createElement("div");
+          div2.className = "row card-info";
+
+          const tableH = document.createElement("thead");
+          const tableR1 = document.createElement("tr");
+
+          for (col of [
+            "#",
+            "ID",
+            "Περιγραφή",
+            "Όριο",
+            "Τρέχ. πωλήσεις",
+            "Status",
+            "Ολοκλήρωση",
+          ]) {
+            if (col == "Ολοκλήρωση") {
+              if (filter == "completed" || notCompletedProds.length == 0) {
+                continue;
+              }
+            }
+            const tableHEl = document.createElement("th");
+            tableHEl.setAttribute("scope", "col");
+            tableHEl.innerHTML = col;
+            tableR1.appendChild(tableHEl);
+          }
+
+          tableH.appendChild(tableR1);
+          saleTable.appendChild(tableH);
+
+          const tableBody = document.createElement("tbody");
+
+          let count = 1;
+          for (prod of offer.products) {
+            const tableR2 = document.createElement("tr");
+
+            const tableHEl2 = document.createElement("th");
+            tableHEl2.setAttribute("scope", "row");
+            tableHEl2.innerHTML = count;
+            count++;
+            tableR2.appendChild(tableHEl2);
+
+            const tableEl1 = document.createElement("td");
+            tableEl1.innerHTML = prod.productID;
+            tableR2.appendChild(tableEl1);
+
+            const tableEl2 = document.createElement("td");
+            tableEl2.innerHTML = prod.desc;
+            tableR2.appendChild(tableEl2);
+
+            const tableEl3 = document.createElement("td");
+            tableEl3.innerHTML = prod.sales_num;
+            tableR2.appendChild(tableEl3);
+
+            const tableEl4 = document.createElement("td");
+            if (prod.current_sales) {
+              tableEl4.innerHTML = prod.current_sales;
+            }
+            tableR2.appendChild(tableEl4);
+
+            const tableEl5 = document.createElement("td");
+            if (prod.status == "not-overdue") {
+              tableEl5.innerHTML = "Εμπρόθεσμη";
+              tableEl5.style.color = "green";
+            } else if (prod.status == "overdue") {
+              tableEl5.innerHTML = "Εκπρόθεσμη";
+              tableEl5.style.color = "red";
+            } else if (prod.status == "complete") {
+              tableEl5.innerHTML = "Ολοκληρωμένη";
+            }
+
+            tableR2.appendChild(tableEl5);
+
+            if (prod.status != "complete") {
+              const tableEl6 = document.createElement("td");
+              const btn_complete = document.createElement("button");
+              btn_complete.className = "btn btn-success";
+              btn_complete.id = prod.productID;
+              btn_complete.textContent = "Ολοκλήρωση";
+              btn_complete.setAttribute(
+                "onclick",
+                "setCompleted(this, 'sale')"
+              );
+              tableEl6.appendChild(btn_complete);
+              tableR2.appendChild(tableEl6);
+            }
+            tableBody.appendChild(tableR2);
+          }
+          saleTable.appendChild(tableBody);
+        } else if (offer.type == "time") {
+          const div1 = document.createElement("div");
+          div1.className = "row card-info";
+
+          const div11 = document.createElement("div");
+          div11.className = "offer-type f-grey col";
+          div11.textContent = "Τύπος";
+
+          const div12 = document.createElement("div");
+          div12.className = "offer-type col";
+          div12.textContent = "Βάσει χρόνου";
+
+          div1.append(div11);
+          div1.append(div12);
+          right_col.append(div1);
+
+          const div8 = document.createElement("div");
+          div8.className = "row card-info";
+
+          const div81 = document.createElement("div");
+          div81.className = "offer-startDate f-grey col";
+          div81.textContent = "Ημερομηνία έναρξης";
+
+          const div82 = document.createElement("div");
+          div82.className = "offer-startDate col";
+          div82.textContent = offer.startDate;
+
+          div8.append(div81);
+          div8.append(div82);
+          right_col.append(div8);
+
+          const div2 = document.createElement("div");
+          div2.className = "row card-info";
+
+          const div21 = document.createElement("div");
+          div21.className = "offer-endDate f-grey col";
+          div21.textContent = "Ημερομηνία λήξης";
+
+          console.log(offer);
+          const div22 = document.createElement("div");
+          div22.className = "offer-endDate col";
+          div22.textContent = offer.endDate;
+
+          div2.append(div21);
+          div2.append(div22);
+          right_col.append(div2);
+
+          const tableH = document.createElement("thead");
+          const tableR1 = document.createElement("tr");
+
+          for (col of ["#", "Περιγραφή", "Status", "Ολοκλήρωση"]) {
+            if (col == "Ολοκλήρωση") {
+              if (filter == "completed" || notCompletedProds.length == 0) {
+                continue;
+              }
+            }
+            const tableHEl = document.createElement("th");
+            tableHEl.setAttribute("scope", "col");
+            tableHEl.innerHTML = col;
+            tableR1.appendChild(tableHEl);
+          }
+
+          tableH.appendChild(tableR1);
+          saleTable.appendChild(tableH);
+
+          const tableBody = document.createElement("tbody");
+
+          let count = 1;
+          for (prod of offer.products) {
+            const tableR2 = document.createElement("tr");
+
+            const tableHEl2 = document.createElement("th");
+            tableHEl2.setAttribute("scope", "row");
+            tableHEl2.innerHTML = count;
+            count++;
+            tableR2.appendChild(tableHEl2);
+
+            const tableEl2 = document.createElement("td");
+            tableEl2.innerHTML = prod.desc;
+            tableR2.appendChild(tableEl2);
+
+            const tableEl5 = document.createElement("td");
+            if (prod.status == "not-overdue") {
+              tableEl5.innerHTML = "Εμπρόθεσμη";
+              tableEl5.style.color = "green";
+            } else if (prod.status == "overdue") {
+              tableEl5.innerHTML = "Εκπρόθεσμη";
+              tableEl5.style.color = "red";
+            } else if (prod.status == "complete") {
+              tableEl5.innerHTML = "Ολοκληρωμένη";
+            }
+
+            tableR2.appendChild(tableEl5);
+
+            if (prod.status != "complete") {
+              const tableEl6 = document.createElement("td");
+              const btn_complete = document.createElement("button");
+              btn_complete.className = "btn btn-success";
+              btn_complete.id = prod.desc;
+              btn_complete.textContent = "Ολοκλήρωση";
+              btn_complete.setAttribute(
+                "onclick",
+                "setCompleted(this, 'time')"
+              );
+              tableEl6.appendChild(btn_complete);
+              tableR2.appendChild(tableEl6);
+            }
+            tableBody.appendChild(tableR2);
+          }
+          saleTable.appendChild(tableBody);
+        }
+
+        const div7 = document.createElement("div");
+        div7.className = "row card-info";
+
+        const div71 = document.createElement("div");
+        div71.className = "offer-id col f-grey";
+        div71.textContent = "ID";
+
+        const div72 = document.createElement("div");
+        div72.className = "offer-id col";
+        div72.textContent = offer._id;
+
+        div7.append(div71);
+        div7.append(div72);
+        left_col.append(div7);
+
+        const div4 = document.createElement("div");
+        div4.className = "row card-info";
+
+        const div41 = document.createElement("div");
+        div41.className = "offer-comment f-grey col";
+        div41.textContent = "Σχόλιο";
+
+        const div42 = document.createElement("div");
+        div42.className = "offer-comment col";
+        div42.textContent = offer.comment;
+
+        div4.append(div41);
+        div4.append(div42);
+        left_col.append(div4);
+
+        offer_body.append(left_col);
+        offer_body.append(right_col);
+        saleTableDiv.appendChild(saleTable);
+        offer_body.append(saleTableDiv);
+
+        if (notCompletedProds.length > 0) {
+          const div8 = document.createElement("div");
+          div8.className = "buttons-container";
+
+          const editLink = document.createElement("a");
+          editLink.setAttribute("href", `/offers/edit/?id=${offer._id}`);
+          editLink.className = "a-edit btn btn-edit btn-warning btn-complete";
+          editLink.textContent = "Επεξεργασία";
+          div8.append(editLink);
+          offer_body.append(div8);
+        }
+        offer_card.append(offer_body);
+        const container = document.getElementById("offers");
+        container.append(offer_card);
+      };
+    </script>
+    <script>
+      getOffers = async (page) => {
+        const filter = document.getElementById("filter-form").value;
+        const search_term = document.getElementById("search-bar").value;
+        let fetch_url = `/api/offers?filter=${filter}`;
+        if (page) {
+          fetch_url += `&p=${page}`;
+        }
+        if (search_term !== "") {
+          fetch_url += `&search=${search_term}`;
+        }
+        const res = await fetch(fetch_url);
+        const data = await res.json();
+        console.log(data);
+        let offersResult = data.result;
+
+        for (offer of offersResult) {
+          generateOfferCard(offer, filter);
+        }
+        document.getElementById("pagination").innerHTML = generatePagination(
+          data.page,
+          data.pageCount
+        );
+      };
+    </script>
+    <script>
+      createTimeline = async () => {
+        const filter = document.getElementById("filter-form").value;
+        const search_term = document.getElementById("search-bar").value;
+
+        let fetch_url = `/api/offers/timeline?filter=${filter}`;
+
+        const res = await fetch(fetch_url);
+        const data = await res.json();
+        let offersResult = data.result;
+        console.log(offersResult);
+        if (offersResult.filter((offer) => offer.type == "time").length > 0) {
+          let container = document.getElementById("timeline");
+          let date_offers = [];
+
+          for (offer of offersResult) {
+            date_offers.push({
+              content: offer.title,
+              start: offer.startDate,
+              end: offer.endDate,
+            });
+          }
+          // Create a DataSet (allows two way data-binding)
+          let items = new vis.DataSet(date_offers);
+          // Configuration for the Timeline
+          let today = new Date();
+          const dd = String(today.getDate()).padStart(2, "0");
+          const mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
+          const yyyy = today.getFullYear();
+          today = yyyy + "-" + mm + "-" + dd;
+
+          let options = {
+            width: "85%",
+            timeAxis: { scale: "day", step: 3 },
+            height: "250px",
+            start: today,
+          };
+
+          // Create a Timeline
+          let timeline = new vis.Timeline(container, items, options);
+          function getRandomColor() {
+            color = "hsl(" + Math.random() * 360 + ", 100%, 75%)";
+            return color;
+          }
+          for (el of document.getElementsByClassName("vis-item-overflow")) {
+            el.style.backgroundColor = getRandomColor();
+          }
+        }
+      };
+    </script>
+    <script
+      type="text/javascript"
+      src="//unpkg.com/vis-timeline@latest/standalone/umd/vis-timeline-graph2d.min.js"
+    ></script>
+    <link
+      href="//unpkg.com/vis-timeline@latest/styles/vis-timeline-graph2d.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+  </head>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light mobile-nav">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="../index.html">Prime Admin Page</a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="./index.html"
+                >Προσφορές</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../calc.html">Υπολογιστής τιμής </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../message.html">Μηνύματα </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="../grossProfit.html"
+                >Υπολογισμός κέρδους
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <ul
+      class="nav nav-pills nav-fill shadow p-3 mb-5 bg-body rounded desktop-nav"
+    >
+      <li class="nav-item">
+        <a
+          class="nav-link home"
+          href="../index.html"
+          tabindex="-1"
+          aria-disabled="true"
+          >Prime Admin Page</a
+        >
+      </li>
+      <li class="nav-item">
+        <a class="nav-link active" href="../offers/index.html">Προσφορές</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="../calc.html">Υπολογιστής τιμής</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="../message.html">Μηνύματα </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="../grossProfit.html">Υπολογισμός κέρδους </a>
+      </li>
+    </ul>
+    <div class="title">
+      <h5 class="card-title">Προσφορές</h5>
+    </div>
+    <div id="filter-addbtn">
+      <div class="row">
+        <div class="filter col">
+          <select
+            id="filter-form"
+            class="form-select filter-form"
+            aria-label="Default select example"
+            onchange="reloadPage()"
+          >
+            <option value="all">Όλα</option>
+            <option value="not-completed" selected>Ενεργά</option>
+            <option value="completed">Ολοκληρωμένα</option>
+          </select>
+        </div>
+        <div class="add-offer col">
+          <a href="./add.html" class="add-link"
+            ><button class="btn btn-primary btn-add-offer">Προσθήκη</button></a
+          >
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <input
+            class="form-control"
+            type="text"
+            name="search-bar"
+            placeholder="Αναζήτηση"
+            id="search-bar"
+          />
+        </div>
+        <div class="col btn-search-cont">
+          <button
+            id="btn-search"
+            class="btn btn-primary btn-search"
+            onclick="reloadPage()"
+          >
+            Αναζήτηση
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="timeline"></div>
+    <div id="offers"></div>
+    <div id="pagination"></div>
+    <script>
+      getOffers();
+      createTimeline();
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      let search_field = document.getElementById("search-bar");
       search_field.addEventListener("keyup", function (event) {
         if (event.keyCode === 13) {
           event.preventDefault();
           document.getElementById("btn-search").click();
         }
-      })
+      });
     </script>
-</body>
-
+  </body>
 </html>
