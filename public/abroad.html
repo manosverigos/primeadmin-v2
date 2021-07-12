@@ -126,15 +126,14 @@
           />          </div>
         </div>
         <div class="row row-cacl">
-          <div class="col col-cacl">
-            Αρχείο
-          </div>
+
           <div class="col col-cacl">
             <input type="file" id="input-file" />
           </div>
         </div>
         
       </div>
+      <div id="comments"></div>
     </div>
   </body>
   <script>
@@ -143,6 +142,11 @@
     const inputFile = document.getElementById("input-file");
 
     inputFile.addEventListener("change", async () => {
+      if(inputProfit.value === '' || inputEmail.value === '') {
+        document.getElementById('comments').innerHTML = 'Παρακαλώ συμπληρώστε όλα τα πεδία για να γίνει ο υπολογισμός'
+        document.getElementById('input-file').value = null
+        return
+      }
       let requestJSON = {};
       let productArray = [];
       abroadExcelFile = await readXlsxFile(inputFile.files[0]);
@@ -160,7 +164,17 @@
       requestJSON.profit = inputProfit.value;
       requestJSON.email = inputEmail.value;
       requestJSON.products = productArray;
-      console.log(requestJSON);
+
+      const res = await fetch("/api/abroad",
+        {
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            method: "POST",
+            credentials: 'same-origin',
+            body: JSON.stringify(requestJSON)
+        })
     });
   </script>
   <script
