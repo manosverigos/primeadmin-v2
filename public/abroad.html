@@ -80,9 +80,7 @@
         <a class="nav-link" href="./grossProfit.html">Υπολογισμός κέρδους </a>
       </li>
       <li class="nav-item">
-        <a class="nav-link active" href="./abroad.html"
-          >Excel Εξωτερικού
-        </a>
+        <a class="nav-link active" href="./abroad.html">Excel Εξωτερικού </a>
       </li>
     </ul>
     <div class="title">
@@ -90,13 +88,12 @@
     </div>
     <div id="calculationContainer">
       <div id="excelFileDescription">
-        Τα excel με τα προϊόντα εξωτερικού πρέπει να περιέχει τις ακόλουθες στήλες με αυτήν τη σειρά σε μορφή αριθμών.
+        Τα excel με τα προϊόντα εξωτερικού πρέπει να περιέχει τις ακόλουθες
+        στήλες με αυτήν τη σειρά σε μορφή αριθμών.
         <div id="excelFileList">
           <br />
           <ul>
-            <li>
-              Περιγραφή
-            </li>
+            <li>Περιγραφή</li>
             <li>Κωδικός Soft1</li>
             <li>Barcode</li>
             <li>Εταιρία</li>
@@ -109,15 +106,61 @@
         Παρακαλώ ανεβάστε το αρχείο για να ξεκινήσει ο υπολογισμός
         <br />
         <br />
-        <input type="file" id="input" />
+        <div class="row row-cacl">
+          <div class="col col-cacl">
+            MarkUp
+          </div>
+          <div class="col col-cacl">
+            <input type="number" id="input-profit" value="40">
+          </div>
+        </div>
+        <div class="row row-cacl">
+          <div class="col col-cacl">
+            Email
+          </div>
+          <div class="col col-cacl">
+            <input
+            type="email"
+            value="giorgosv@primepharmacy.gr"
+            id="input-email"
+          />          </div>
+        </div>
+        <div class="row row-cacl">
+          <div class="col col-cacl">
+            Αρχείο
+          </div>
+          <div class="col col-cacl">
+            <input type="file" id="input-file" />
+          </div>
+        </div>
+        
       </div>
     </div>
   </body>
   <script>
-    const input = document.getElementById("input");
+    const inputProfit = document.getElementById("input-profit");
+    const inputEmail = document.getElementById("input-email");
+    const inputFile = document.getElementById("input-file");
 
-    input.addEventListener("change", async () => {
-      abroadExcelFile = await readXlsxFile(files[0]);
+    inputFile.addEventListener("change", async () => {
+      let requestJSON = {};
+      let productArray = [];
+      abroadExcelFile = await readXlsxFile(inputFile.files[0]);
+      abroadExcelFile.shift();
+      for (product of abroadExcelFile) {
+        let newProductObject = {};
+        newProductObject.description = product[0];
+        newProductObject.codeSoft1 = product[1];
+        newProductObject.barcode = product[2];
+        newProductObject.vendor = product[3];
+        newProductObject.wholesalePrice = product[4];
+        newProductObject.purchaseDiscount = product[5];
+        productArray.push(newProductObject);
+      }
+      requestJSON.profit = inputProfit.value;
+      requestJSON.email = inputEmail.value;
+      requestJSON.products = productArray;
+      console.log(requestJSON);
     });
   </script>
   <script
