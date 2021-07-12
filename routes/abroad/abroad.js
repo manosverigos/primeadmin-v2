@@ -1,7 +1,7 @@
 const fetch = require("node-fetch");
 var nodemailer = require("nodemailer");
 const excel = require("excel4node");
-const path = require('path')
+const path = require("path");
 
 exports.computeExcel = async (req, res) => {
   try {
@@ -34,11 +34,11 @@ exports.computeExcel = async (req, res) => {
         newProductJSON.sellingPriceEUR * currencyRates.EURJPY;
       newProductsArray.push(newProductJSON);
     }
-    await createExcelFile(newProductsArray)
-    await sendEmail(email)
+    await createExcelFile(newProductsArray);
+    await sendEmail(email);
     res.json({ message: "success" });
-  } catch (err){
-    console.log(err)
+  } catch (err) {
+    console.log(err);
     res.json({ message: "oops" });
   }
 };
@@ -67,49 +67,52 @@ createExcelFile = async (productArray) => {
     numberFormat: "$#,##0.00; ($#,##0.00); -",
   });
 
- for (j = 0; j < Object.keys(productArray[0]).length; j++) {
-
-      worksheet
-        .cell(1, j+1)
-        .string(Object.keys(productArray[0])[j].toString())
-        .style(style);
-    }
+  for (j = 0; j < Object.keys(productArray[0]).length; j++) {
+    worksheet
+      .cell(1, j + 1)
+      .string(Object.keys(productArray[0])[j].toString())
+      .style(style);
+  }
   for (i = 0; i < productArray.length; i++) {
     for (j = 0; j < Object.keys(productArray[i]).length; j++) {
       worksheet
-        .cell(i + 2, j+1)
+        .cell(i + 2, j + 1)
         .string(productArray[i][Object.keys(productArray[i])[j]].toString())
         .style(style);
     }
   }
-  await workbook.write('files/abroadProducts.xlsx')
+  
+  await workbook.write("files/abroadProducts.xlsx");
+  console.log("excel created");
 };
 
 sendEmail = async (email) => {
   var transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: "gmail",
     auth: {
       user: `${process.env.EMAIL_USERNAME}`,
-      pass: `${process.env.EMAIL_PASSWORD}`
-    }
+      pass: `${process.env.EMAIL_PASSWORD}`,
+    },
   });
-  let mail_list = [email]
-  const pathToFile = path.resolve('./files/abroadProducts.xlsx')
-  console.log(pathToFile)
+  let mail_list = [email];
+  const pathToFile = path.resolve("./files/abroadProducts.xlsx");
+  console.log(pathToFile);
   const mailOptions = {
-    from: 'info@primepharmacy.gr',
-    to: mail_list ,
+    from: "info@primepharmacy.gr",
+    to: mail_list,
     subject: `Τιμές Προϊόντων Εξωτερικού`,
-    attachments: [{
-      path: pathToFile
-    }]
+    attachments: [
+      {
+        path: pathToFile,
+      },
+    ],
   };
 
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error);
     } else {
-      console.log('Email sent: ' + info.response);
+      console.log("Email sent: " + info.response);
     }
   });
-}
+};
