@@ -82,7 +82,7 @@ createExcelFile = async (productArray) => {
     }
   }
   
-  await workbook.write("files/abroadProducts.xlsx");
+  await workbook.write("abroadProducts.xlsx");
   console.log("excel created");
 };
 
@@ -95,7 +95,7 @@ sendEmail = async (email) => {
     },
   });
   let mail_list = [email];
-  const pathToFile = path.resolve("./files/abroadProducts.xlsx");
+  const pathToFile = path.resolve("./abroadProducts.xlsx");
   console.log(pathToFile);
   const mailOptions = {
     from: "info@primepharmacy.gr",
