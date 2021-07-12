@@ -99,6 +99,7 @@
             <li>Εταιρία</li>
             <li>Χονδρική Τιμή</li>
             <li>Έκπτωση Αγοράς</li>
+            <li>ΦΠΑ</li>
           </ul>
         </div>
       </div>
@@ -107,31 +108,26 @@
         <br />
         <br />
         <div class="row row-cacl">
+          <div class="col col-cacl">MarkUp</div>
           <div class="col col-cacl">
-            MarkUp
-          </div>
-          <div class="col col-cacl">
-            <input type="number" id="input-profit" value="40">
+            <input type="number" id="input-profit" value="40" />
           </div>
         </div>
         <div class="row row-cacl">
-          <div class="col col-cacl">
-            Email
-          </div>
+          <div class="col col-cacl">Email</div>
           <div class="col col-cacl">
             <input
-            type="email"
-            value="giorgosv@primepharmacy.gr"
-            id="input-email"
-          />          </div>
+              type="email"
+              value="giorgosv@primepharmacy.gr"
+              id="input-email"
+            />
+          </div>
         </div>
         <div class="row row-cacl">
-
           <div class="col col-cacl">
             <input type="file" id="input-file" />
           </div>
         </div>
-        
       </div>
       <div id="comments"></div>
     </div>
@@ -142,10 +138,12 @@
     const inputFile = document.getElementById("input-file");
 
     inputFile.addEventListener("change", async () => {
-      if(inputProfit.value === '' || inputEmail.value === '') {
-        document.getElementById('comments').innerHTML = 'Παρακαλώ συμπληρώστε όλα τα πεδία για να γίνει ο υπολογισμός'
-        document.getElementById('input-file').value = null
-        return
+      document.getElementById("comments").innerHTML = "";
+      if (inputProfit.value === "" || inputEmail.value === "") {
+        document.getElementById("comments").innerHTML =
+          "Παρακαλώ συμπληρώστε όλα τα πεδία για να γίνει ο υπολογισμός";
+        document.getElementById("input-file").value = null;
+        return;
       }
       let requestJSON = {};
       let productArray = [];
@@ -159,22 +157,31 @@
         newProductObject.vendor = product[3];
         newProductObject.wholesalePrice = product[4];
         newProductObject.purchaseDiscount = product[5];
+        newProductObject.vat = product[6];
         productArray.push(newProductObject);
       }
       requestJSON.profit = inputProfit.value;
       requestJSON.email = inputEmail.value;
       requestJSON.products = productArray;
 
-      const res = await fetch("/api/abroad",
-        {
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json'
-            },
-            method: "POST",
-            credentials: 'same-origin',
-            body: JSON.stringify(requestJSON)
-        })
+      const res = await fetch("/api/abroad", {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        credentials: "same-origin",
+        body: JSON.stringify(requestJSON),
+      });
+      const data = await res.json();
+      const message = data.message;
+      if (message === "success") {
+        document.getElementById("comments").innerHTML =
+          "Το αρχείο μεταφέρθηκε με επιτυχία. Θα λάβετε το καινούριο αρχείο με τους υπολογισμούς εντός ολίγου";
+      } else {
+        document.getElementById("comments").innerHTML =
+          "Προκλήθηκε κάποιο πρόβλημα";
+      }
     });
   </script>
   <script
