@@ -115,4 +115,4 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-.files/abroadProducts.xlsx
+files/abroadProducts.xlsx
