@@ -141,7 +141,7 @@
       document.getElementById("comments").innerHTML = "";
       if (inputProfit.value === "" || inputEmail.value === "") {
         document.getElementById("comments").innerHTML =
-          "Παρακαλώ συμπληρώστε όλα τα πεδία για να γίνει ο υπολογισμός";
+          "Παρακαλώ συμπληρώστε όλα τα πεδία για να γίνει ο υπολογισμός.";
         document.getElementById("input-file").value = null;
         return;
       }
@@ -177,7 +177,7 @@
       const message = data.message;
       if (message === "success") {
         document.getElementById("comments").innerHTML =
-          "Το αρχείο μεταφέρθηκε με επιτυχία. Θα λάβετε το καινούριο αρχείο με τους υπολογισμούς εντός ολίγου";
+          "Το αρχείο μεταφέρθηκε με επιτυχία. Θα λάβετε το καινούριο αρχείο με τους υπολογισμούς εντός ολίγου.";
       } else {
         document.getElementById("comments").innerHTML =
           "Προκλήθηκε κάποιο πρόβλημα";

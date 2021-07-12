@@ -35,8 +35,8 @@ exports.computeExcel = async (req, res) => {
       newProductsArray.push(newProductJSON);
     }
     await createExcelFile(newProductsArray);
-    await sendEmail(email);
-    res.json({ message: "success" });
+    await sendEmail(email,res);
+
   } catch (err) {
     console.log(err);
     res.json({ message: "oops" });
@@ -83,10 +83,9 @@ createExcelFile = async (productArray) => {
   }
   
   await workbook.write("abroadProducts.xlsx");
-  console.log("excel created");
 };
 
-sendEmail = async (email) => {
+sendEmail = async (email,res) => {
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
@@ -96,7 +95,6 @@ sendEmail = async (email) => {
   });
   let mail_list = [email];
   const pathToFile = path.resolve("./abroadProducts.xlsx");
-  console.log(pathToFile);
   const mailOptions = {
     from: "info@primepharmacy.gr",
     to: mail_list,
@@ -111,8 +109,10 @@ sendEmail = async (email) => {
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error);
+      res.json({ message: "oops" });
     } else {
       console.log("Email sent: " + info.response);
+      res.json({ message: "success" });
     }
   });
 };
