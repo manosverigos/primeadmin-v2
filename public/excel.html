@@ -83,71 +83,144 @@
         <a class="nav-link active" href="./excel.html">Υπολογισμός Excel</a>
       </li>
     </ul>
-    <div class="title">
-      <h5 class="card-title">Δημιουργία Excel Εξωτερικού</h5>
-    </div>
+
     <div id="calculationContainer">
-      <div id="excelFileDescription">
-        Τα excel με τα προϊόντα εξωτερικού πρέπει να περιέχει τις ακόλουθες
-        στήλες με αυτήν τη σειρά σε μορφή αριθμών.
-        <div id="excelFileList">
+      <div id="input-container" class="row">
+        <div id="inputDiv-abroad" class="col">
+          <div class="title">
+            <h5 class="card-title">Δημιουργία Excel Εξωτερικού</h5>
+          </div>
+          <div id="excelFileDescription">
+            Το excel με τα προϊόντα εξωτερικού πρέπει να περιέχει τις ακόλουθες
+            στήλες με αυτήν τη σειρά σε μορφή αριθμών.
+            <div id="excelFileList">
+              <br />
+              <ul>
+                <li>Περιγραφή</li>
+                <li>Κωδικός Soft1</li>
+                <li>Barcode</li>
+                <li>Εταιρία</li>
+                <li>Χονδρική Τιμή</li>
+                <li>Έκπτωση Αγοράς</li>
+                <li>ΦΠΑ</li>
+              </ul>
+            </div>
+          </div>
+          Παρακαλώ ανεβάστε το αρχείο για να ξεκινήσει ο υπολογισμός
           <br />
-          <ul>
-            <li>Περιγραφή</li>
-            <li>Κωδικός Soft1</li>
-            <li>Barcode</li>
-            <li>Εταιρία</li>
-            <li>Χονδρική Τιμή</li>
-            <li>Έκπτωση Αγοράς</li>
-            <li>ΦΠΑ</li>
-          </ul>
+          <br />
+          <div class="row row-cacl">
+            <div class="col col-cacl">MarkUp</div>
+            <div class="col col-cacl">
+              <input type="number" id="abroad-input-profit" value="40" />
+            </div>
+          </div>
+          <div class="row row-cacl">
+            <div class="col col-cacl">Email</div>
+            <div class="col col-cacl">
+              <input
+                type="email"
+                value="giorgosv@primepharmacy.gr"
+                id="abroad-input-email"
+              />
+            </div>
+          </div>
+          <div class="row row-cacl">
+            <div class="col col-cacl">
+              <input type="file" id="abroad-input-file" />
+            </div>
+          </div>
+          <div id="abroad-comments"></div>
+        </div>
+        <!-- Input for timologio -->
+        <div id="inputDiv-timologio" class="col">
+          <div class="title">
+            <h5 class="card-title">Δημιουργία Excel Τιμολογίου</h5>
+          </div>
+          <div id="excelFileDescription">
+            Το excel του τιμολογίου πρέπει να περιέχει τις ακόλουθες στήλες με
+            αυτήν τη σειρά σε μορφή αριθμών.
+            <div id="excelFileList">
+              <br />
+              <ul>
+                <li>A/A</li>
+                <li>Κωδικός ανεύρεσης</li>
+                <li>Κωδικός</li>
+                <li>Περιγραφή</li>
+                <li>Ποσότητα</li>
+                <li>Τιμή</li>
+                <li>Εκπ.%1</li>
+                <li>Εκπ.%2</li>
+                <li>Εκπ.%3</li>
+                <li>ΦΠΑ</li>
+                <li>Αξία</li>
+                <li>Καθ. Αξία</li>
+                <li>Αξία ΦΠΑ</li>
+                <li>Υπόλοιπο</li>
+                <li>Τιμή λιανικής</li>
+              </ul>
+            </div>
+          </div>
+          Παρακαλώ ανεβάστε το αρχείο για να ξεκινήσει ο υπολογισμός
+          <br />
+          <br />
+          <div class="row row-cacl">
+            <div class="col col-cacl">MarkUp</div>
+            <div class="col col-cacl">
+              <input type="number" id="timologio-input-profit" value="15" />
+            </div>
+          </div>
+          <div class="row row-cacl">
+            <div class="col col-cacl">Year End Bonus</div>
+            <div class="col col-cacl">
+              <input type="number" id="timologio-input-yeb" value="0" />
+            </div>
+          </div>
+          <div class="row row-cacl">
+            <div class="col col-cacl">Email</div>
+            <div class="col col-cacl">
+              <input
+                type="email"
+                value="giorgosv@primepharmacy.gr"
+                id="timologio-input-email"
+              />
+            </div>
+          </div>
+          <div class="row row-cacl">
+            <div class="col col-cacl">
+              <input type="file" id="timologio-input-file" />
+            </div>
+          </div>
+          <div id="timologio-comments"></div>
         </div>
       </div>
-      <div id="inputDiv">
-        Παρακαλώ ανεβάστε το αρχείο για να ξεκινήσει ο υπολογισμός
-        <br />
-        <br />
-        <div class="row row-cacl">
-          <div class="col col-cacl">MarkUp</div>
-          <div class="col col-cacl">
-            <input type="number" id="input-profit" value="40" />
-          </div>
-        </div>
-        <div class="row row-cacl">
-          <div class="col col-cacl">Email</div>
-          <div class="col col-cacl">
-            <input
-              type="email"
-              value="giorgosv@primepharmacy.gr"
-              id="input-email"
-            />
-          </div>
-        </div>
-        <div class="row row-cacl">
-          <div class="col col-cacl">
-            <input type="file" id="input-file" />
-          </div>
-        </div>
-      </div>
-      <div id="comments"></div>
     </div>
   </body>
   <script>
-    const inputProfit = document.getElementById("input-profit");
-    const inputEmail = document.getElementById("input-email");
-    const inputFile = document.getElementById("input-file");
+    const abroadInputProfit = document.getElementById("abroad-input-profit");
+    const abroadInputEmail = document.getElementById("abroad-input-email");
+    const abroadInputFile = document.getElementById("abroad-input-file");
 
-    inputFile.addEventListener("change", async () => {
-      document.getElementById("comments").innerHTML = "";
-      if (inputProfit.value === "" || inputEmail.value === "") {
-        document.getElementById("comments").innerHTML =
+    const timologioInputProfit = document.getElementById(
+      "timologio-input-profit"
+    );
+    const timologioInputEmail = document.getElementById(
+      "timologio-input-email"
+    );
+    const timologioInputFile = document.getElementById("timologio-input-file");
+    const timologioInputYEB = document.getElementById("timologio-input-yeb");
+
+    abroadInputFile.addEventListener("change", async () => {
+      document.getElementById("abroad-comments").innerHTML = "";
+      if (abroadInputProfit.value === "" || abroadInputEmail.value === "") {
+        document.getElementById("abroad-comments").innerHTML =
           "Παρακαλώ συμπληρώστε όλα τα πεδία για να γίνει ο υπολογισμός.";
-        document.getElementById("input-file").value = null;
+        document.getElementById("abroad-input-file").value = null;
         return;
       }
       let requestJSON = {};
       let productArray = [];
-      abroadExcelFile = await readXlsxFile(inputFile.files[0]);
+      const abroadExcelFile = await readXlsxFile(abroadInputFile.files[0]);
       abroadExcelFile.shift();
       for (product of abroadExcelFile) {
         let newProductObject = {};
@@ -160,8 +233,8 @@
         newProductObject.vat = product[6];
         productArray.push(newProductObject);
       }
-      requestJSON.profit = inputProfit.value;
-      requestJSON.email = inputEmail.value;
+      requestJSON.profit = abroadInputProfit.value;
+      requestJSON.email = abroadInputEmail.value;
       requestJSON.products = productArray;
 
       const res = await fetch("/api/abroad", {
@@ -176,10 +249,66 @@
       const data = await res.json();
       const message = data.message;
       if (message === "success") {
-        document.getElementById("comments").innerHTML =
+        document.getElementById("abroad-comments").innerHTML =
           "Το αρχείο μεταφέρθηκε με επιτυχία. Θα λάβετε το καινούριο αρχείο με τους υπολογισμούς εντός ολίγου.";
       } else {
-        document.getElementById("comments").innerHTML =
+        document.getElementById("abroad-comments").innerHTML =
+          "Προκλήθηκε κάποιο πρόβλημα";
+      }
+    });
+
+    timologioInputFile.addEventListener("change", async () => {
+      document.getElementById("timologio-comments").innerHTML = "";
+      if (
+        timologioInputProfit.value === "" ||
+        timologioInputEmail.value === ""
+      ) {
+        document.getElementById("timologio-comments").innerHTML =
+          "Παρακαλώ συμπληρώστε όλα τα πεδία για να γίνει ο υπολογισμός.";
+        document.getElementById("timologio-input-file").value = null;
+        return;
+      }
+      let requestJSON = {};
+      let productArray = [];
+      const timologioExcelFile = await readXlsxFile(
+        timologioInputFile.files[0]
+      );
+      timologioExcelFile.splice(0, 3);
+      for (product of timologioExcelFile) {
+        let newProductObject = {};
+        newProductObject.codeSoft1 = product[2];
+        newProductObject.description = product[3];
+        newProductObject.initialPurchasePrice = product[5];
+        newProductObject.finalPurchasePrice = product[10] / product[4];
+        newProductObject.disc1 = product[6];
+        newProductObject.disc2 = product[7];
+        newProductObject.disc3 = product[8];
+        newProductObject.vat = product[9];
+        newProductObject.salePrice = product[14];
+        productArray.push(newProductObject);
+      }
+      requestJSON.profit = timologioInputProfit.value;
+      requestJSON.email = timologioInputEmail.value;
+      requestJSON.yeb = timologioInputYEB.value;
+      requestJSON.products = productArray;
+
+      console.log(requestJSON);
+      const res = await fetch("/api/timologio", {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        method: "POST",
+        credentials: "same-origin",
+        body: JSON.stringify(requestJSON),
+      });
+      const data = await res.json();
+      const message = data.message;
+      if (message === "success") {
+        document.getElementById("timologio-comments").innerHTML =
+          "Το αρχείο μεταφέρθηκε με επιτυχία. Θα λάβετε το καινούριο αρχείο με τους υπολογισμούς εντός ολίγου.";
+      } else {
+        document.getElementById("timologio-comments").innerHTML =
           "Προκλήθηκε κάποιο πρόβλημα";
       }
     });

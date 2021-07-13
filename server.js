@@ -12,7 +12,7 @@ const { getEditPage } = require('./routes/offers/getEdit.js');
 const { applyEdit } = require('./routes/offers/applyEdit.js');
 const { sendSms } = require('./routes/sms/sendSms.js');
 const { getBalance } = require('./routes/sms/getBalance.js');
-const { computeExcel } = require('./routes/abroad/abroad.js');
+const { computeExcel } = require('./routes/excel/abroad.js');
 
 // const { dirname } = require('path');
 
@@ -41,6 +41,7 @@ app.get('/offers/edit', getEditPage)
 app.post('/api/offers/edit',applyEdit)
 app.post('/api/login', signin)
 app.post('/api/abroad', computeExcel)
+app.post('/api/timologio', computeExcel)
 app.get('/login', (req,res) => {
   res.sendFile(path.join(__dirname, './login/login.html'))
 })
