@@ -24,8 +24,8 @@ exports.computeExcelTimologio = async (req, res) => {
       newProductsArray.push(newProductJSON);
     }
 
-    await createExcelFile(newProductsArray);
-    await sendEmail(email,res);
+    await createExcelFileTimologio(newProductsArray);
+    await sendEmailTimologio(email,res);
 
   } catch (err) {
     console.log(err);
@@ -39,7 +39,7 @@ calculateVat = (vatString) => {
   return parseInt(vatNumber)
 }
 
-createExcelFile = async (productArray) => {
+createExcelFileTimologio = async (productArray) => {
   let workbook = new excel.Workbook();
   let worksheet = workbook.addWorksheet("Υπολογισμένο Τιμολόγιο");
   let style = workbook.createStyle({
@@ -68,7 +68,7 @@ createExcelFile = async (productArray) => {
   await workbook.write("timologio.xlsx");
 };
 
-sendEmail = async (email,res) => {
+sendEmailTimologio = async (email,res) => {
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {

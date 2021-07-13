@@ -32,10 +32,14 @@ exports.computeExcelAbroad = async (req, res) => {
         newProductJSON.sellingPriceEUR * currencyRates.EURUSD;
       newProductJSON.sellingPriceJPY =
         newProductJSON.sellingPriceEUR * currencyRates.EURJPY;
+        newProductJSON.sellingPricePLN =
+        newProductJSON.sellingPriceEUR * currencyRates.EURPLN;
+        newProductJSON.sellingPriceSEK =
+        newProductJSON.sellingPriceEUR * currencyRates.EURSEK;
       newProductsArray.push(newProductJSON);
     }
-    await createExcelFile(newProductsArray);
-    await sendEmail(email,res);
+    await createExcelFileAbroad(newProductsArray);
+    await sendEmailAbroad(email,res);
 
   } catch (err) {
     console.log(err);
@@ -45,7 +49,7 @@ exports.computeExcelAbroad = async (req, res) => {
 
 getCurrencyRates = async () => {
   let currencyRates = {};
-  const url = `http://api.currencylayer.com/live?access_key=${process.env.CURRENCY_API_KEY}&currencies=GBP,EUR,JPY&format=1`;
+  const url = `http://api.currencylayer.com/live?access_key=${process.env.CURRENCY_API_KEY}&currencies=GBP,EUR,JPY,PLN,SEK&format=1`;
 
   const response = await fetch(url);
   const data = await response.json();
@@ -53,10 +57,12 @@ getCurrencyRates = async () => {
   currencyRates.EURUSD = 1 / rates.USDEUR;
   currencyRates.EURGBP = rates.USDGBP / rates.USDEUR;
   currencyRates.EURJPY = rates.USDJPY / rates.USDEUR;
+  currencyRates.EURPLN = rates.USDPLN / rates.USDEUR;
+  currencyRates.EURSEK = rates.USDSEK / rates.USDEUR;
   return currencyRates;
 };
 
-createExcelFile = async (productArray) => {
+createExcelFileAbroad = async (productArray) => {
   let workbook = new excel.Workbook();
   let worksheet = workbook.addWorksheet("Τιμές Προϊόντων Εξωτερικού");
   let style = workbook.createStyle({
@@ -85,7 +91,7 @@ createExcelFile = async (productArray) => {
   await workbook.write("abroadProducts.xlsx");
 };
 
-sendEmail = async (email,res) => {
+sendEmailAbroad = async (email,res) => {
   var transporter = nodemailer.createTransport({
     service: "gmail",
     auth: {
