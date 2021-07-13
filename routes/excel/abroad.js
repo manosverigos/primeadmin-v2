@@ -23,19 +23,19 @@ exports.computeExcelAbroad = async (req, res) => {
       newProductJSON.payPal =
         (newProductJSON.ebay + newProductJSON.pricePlusBag) * 0.04 + 0.45;
       newProductJSON.sellingPriceEUR =
-        newProductJSON.pricePlusBag +
+        (newProductJSON.pricePlusBag +
         newProductJSON.ebay +
-        newProductJSON.payPal;
+        newProductJSON.payPal).toFixed(2);
       newProductJSON.sellingPriceGBP =
-        newProductJSON.sellingPriceEUR * 1.2 * currencyRates.EURGBP;
+        (newProductJSON.sellingPriceEUR * 1.2 * currencyRates.EURGBP).toFixed(2);
       newProductJSON.sellingPriceUSD =
-        newProductJSON.sellingPriceEUR * currencyRates.EURUSD;
+        (newProductJSON.sellingPriceEUR * currencyRates.EURUSD).toFixed(2);
       newProductJSON.sellingPriceJPY =
-        newProductJSON.sellingPriceEUR * currencyRates.EURJPY;
+        (newProductJSON.sellingPriceEUR * currencyRates.EURJPY).toFixed(2);
         newProductJSON.sellingPricePLN =
-        newProductJSON.sellingPriceEUR * currencyRates.EURPLN;
+        (newProductJSON.sellingPriceEUR * currencyRates.EURPLN).toFixed(2);
         newProductJSON.sellingPriceSEK =
-        newProductJSON.sellingPriceEUR * currencyRates.EURSEK;
+        (newProductJSON.sellingPriceEUR * currencyRates.EURSEK).toFixed(2);
       newProductsArray.push(newProductJSON);
     }
     await createExcelFileAbroad(newProductsArray);
