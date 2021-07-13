@@ -292,7 +292,6 @@
       requestJSON.yeb = timologioInputYEB.value;
       requestJSON.products = productArray;
 
-      console.log(requestJSON);
       const res = await fetch("/api/timologio", {
         headers: {
           Accept: "application/json",

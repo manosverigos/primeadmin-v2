@@ -3,7 +3,7 @@ var nodemailer = require("nodemailer");
 const excel = require("excel4node");
 const path = require("path");
 
-exports.computeExcel = async (req, res) => {
+exports.computeExcelAbroad = async (req, res) => {
   try {
     const email = req.body.email;
     const profit = req.body.profit;

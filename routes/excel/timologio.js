@@ -1,39 +1,29 @@
-const fetch = require("node-fetch");
 var nodemailer = require("nodemailer");
 const excel = require("excel4node");
 const path = require("path");
 
-exports.computeExcel = async (req, res) => {
+exports.computeExcelTimologio = async (req, res) => {
   try {
     const email = req.body.email;
     const profit = req.body.profit;
     const productsArray = req.body.products;
-    const currencyRates = await getCurrencyRates();
+    let yeb = req.body.yeb;
+    if(yeb === '') {
+      yeb = 0
+    }
+
     let newProductsArray = [];
 
     for (product of productsArray) {
-      let newProductJSON = { ...product };
-      newProductJSON.finalPurchasePrice =
-        product.wholesalePrice * (1 - product.purchaseDiscount / 100);
-      newProductJSON.profit =
-        newProductJSON.finalPurchasePrice * (1 + profit / 100);
-      newProductJSON.pricePlusBag =
-        newProductJSON.profit * (1 + newProductJSON.vat / 100) + 0.25;
-      newProductJSON.ebay = newProductJSON.pricePlusBag * 0.1;
-      newProductJSON.payPal =
-        (newProductJSON.ebay + newProductJSON.pricePlusBag) * 0.04 + 0.45;
-      newProductJSON.sellingPriceEUR =
-        newProductJSON.pricePlusBag +
-        newProductJSON.ebay +
-        newProductJSON.payPal;
-      newProductJSON.sellingPriceGBP =
-        newProductJSON.sellingPriceEUR * 1.2 * currencyRates.EURGBP;
-      newProductJSON.sellingPriceUSD =
-        newProductJSON.sellingPriceEUR * currencyRates.EURUSD;
-      newProductJSON.sellingPriceJPY =
-        newProductJSON.sellingPriceEUR * currencyRates.EURJPY;
+      let newProductJSON = {  };
+      const vat = calculateVat(product.vat)
+      newProductJSON.codeSoft1 = product.codeSoft1
+      newProductJSON.description = product.description
+      newProductJSON.finalSellingPrice = (product.finalPurchasePrice * (1-yeb/100) * (profit /100 +1) * (vat/100 + 1)).toFixed(2)
+      newProductJSON.webDiscount = ((1-newProductJSON.finalSellingPrice / product.salePrice) *100).toFixed(2)
       newProductsArray.push(newProductJSON);
     }
+
     await createExcelFile(newProductsArray);
     await sendEmail(email,res);
 
@@ -43,22 +33,15 @@ exports.computeExcel = async (req, res) => {
   }
 };
 
-getCurrencyRates = async () => {
-  let currencyRates = {};
-  const url = `http://api.currencylayer.com/live?access_key=${process.env.CURRENCY_API_KEY}&currencies=GBP,EUR,JPY&format=1`;
-
-  const response = await fetch(url);
-  const data = await response.json();
-  const rates = data.quotes;
-  currencyRates.EURUSD = 1 / rates.USDEUR;
-  currencyRates.EURGBP = rates.USDGBP / rates.USDEUR;
-  currencyRates.EURJPY = rates.USDJPY / rates.USDEUR;
-  return currencyRates;
-};
+calculateVat = (vatString) => {
+  const vatPercentageString = vatString.split(' ')[1]
+  const vatNumber = vatPercentageString.split('%')[0]
+  return parseInt(vatNumber)
+}
 
 createExcelFile = async (productArray) => {
   let workbook = new excel.Workbook();
-  let worksheet = workbook.addWorksheet("Τιμές Προϊόντων Εξωτερικού");
+  let worksheet = workbook.addWorksheet("Υπολογισμένο Τιμολόγιο");
   let style = workbook.createStyle({
     font: {
       color: "#000000",
@@ -82,7 +65,7 @@ createExcelFile = async (productArray) => {
     }
   }
   
-  await workbook.write("abroadProducts.xlsx");
+  await workbook.write("timologio.xlsx");
 };
 
 sendEmail = async (email,res) => {
@@ -94,11 +77,11 @@ sendEmail = async (email,res) => {
     },
   });
   let mail_list = [email];
-  const pathToFile = path.resolve("./abroadProducts.xlsx");
+  const pathToFile = path.resolve("./timologio.xlsx");
   const mailOptions = {
     from: "info@primepharmacy.gr",
     to: mail_list,
-    subject: `Τιμές Προϊόντων Εξωτερικού`,
+    subject: `Τιμολόγιο`,
     attachments: [
       {
         path: pathToFile,
