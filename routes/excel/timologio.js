@@ -42,25 +42,40 @@ calculateVat = (vatString) => {
 createExcelFileTimologio = async (productArray) => {
   let workbook = new excel.Workbook();
   let worksheet = workbook.addWorksheet("Υπολογισμένο Τιμολόγιο");
-  let style = workbook.createStyle({
+  let styleOriginal = workbook.createStyle({
     font: {
       color: "#000000",
       size: 12,
     },
     numberFormat: "$#,##0.00; ($#,##0.00); -",
   });
-
+  let styleRed = workbook.createStyle({
+    font: {
+      color: "#ff0000",
+      size: 12,
+    },
+    numberFormat: "$#,##0.00; ($#,##0.00); -",
+  });
   for (j = 0; j < Object.keys(productArray[0]).length; j++) {
     worksheet
       .cell(1, j + 1)
       .string(Object.keys(productArray[0])[j].toString())
-      .style(style);
+      .style(styleOriginal);
   }
   for (i = 0; i < productArray.length; i++) {
     for (j = 0; j < Object.keys(productArray[i]).length; j++) {
+      let style = styleOriginal;
+      const number = productArray[i][Object.keys(productArray[i])[j]]
+      if(j>1 && number > 80) {
+        style = styleRed
+      }
+      let numberString = number.toString()
+      if(j > 1) {
+        numberString = numberString.replace('.',',')
+      }
       worksheet
         .cell(i + 2, j + 1)
-        .string(productArray[i][Object.keys(productArray[i])[j]].toString())
+        .string(numberString)
         .style(style);
     }
   }
